@@ -1,6 +1,7 @@
-use tetra::graphics::{self, Color, Texture};
+use tetra::graphics::{self, Color, Rectangle, Texture};
 use tetra::input::{self, Key};
 use tetra::math::Vec2;
+use tetra::window;
 use tetra::{Context, ContextBuilder, State};
 
 const WINDOW_WIDTH: f32 = 640.0;
