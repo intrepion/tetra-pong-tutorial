@@ -7,22 +7,32 @@ use tetra::{Context, ContextBuilder, State};
 const WINDOW_WIDTH: f32 = 640.0;
 const WINDOW_HEIGHT: f32 = 480.0;
 const PADDLE_SPEED: f32 = 8.0;
+const BALL_SPEED: f32 = 5.0;
 
 struct Entity {
     texture: Texture,
     position: Vec2<f32>,
+    velocity: Vec2<f32>,
 }
 
 impl Entity {
     fn new(texture: Texture, position: Vec2<f32>) -> Entity {
-        Entity { texture, position }
+        Entity::with_velocity(texture, position, Vec2::zero())
+    }
+
+    fn with_velocity(texture: Texture, position: Vec2<f32>, velocity: Vec2<f32>) -> Entity {
+        Entity {
+            texture,
+            position,
+            velocity,
+        }
     }
 }
 
 struct GameState {
     player1: Entity,
     player2: Entity,
-    ball: Entity,
+    ball: Entity,   
 }
 
 impl GameState {
@@ -45,10 +55,12 @@ impl GameState {
             WINDOW_HEIGHT / 2.0 - ball_texture.height() as f32 / 2.0,
         );
         
+        let ball_velocity = Vec2::new(-BALL_SPEED, 0.0);
+
         Ok(GameState {
             player1: Entity::new(player1_texture, player1_position),
             player2: Entity::new(player2_texture, player2_position),
-            ball: Entity::new(ball_texture, ball_position),
+            ball: Entity::with_velocity(ball_texture, ball_position, ball_velocity),
         })
     }
 }
@@ -71,6 +83,8 @@ impl State for GameState {
             self.player2.position.y += PADDLE_SPEED;
         }
 
+        self.ball.position += self.ball.velocity;
+        
         Ok(())
     }
 
