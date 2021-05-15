@@ -19,9 +19,10 @@ impl GameState {
 
 impl State for GameState {
     fn draw(&mut self, ctx: &mut Context) -> tetra::Result {
-        // Feel free to change the color to something of your choice!
         graphics::clear(ctx, Color::rgb(0.392, 0.584, 0.929));
-
+    
+        self.paddle_texture.draw(ctx, Vec2::new(16.0, 16.0));
+    
         Ok(())
     }
 }
