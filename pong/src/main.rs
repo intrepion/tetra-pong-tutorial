@@ -8,6 +8,8 @@ const WINDOW_WIDTH: f32 = 640.0;
 const WINDOW_HEIGHT: f32 = 480.0;
 const PADDLE_SPEED: f32 = 8.0;
 const BALL_SPEED: f32 = 5.0;
+const PADDLE_SPIN: f32 = 4.0;
+const BALL_ACC: f32 = 0.05;
 
 struct Entity {
     texture: Texture,
@@ -42,6 +44,13 @@ impl Entity {
             self.position.y,
             self.width(),
             self.height(),
+        )
+    }
+
+    fn centre(&self) -> Vec2<f32> {
+        Vec2::new(
+            self.position.x + (self.width() / 2.0),
+            self.position.y + (self.height() / 2.0),
         )
     }
 }
@@ -114,8 +123,22 @@ impl State for GameState {
             None
         };
         
-        if paddle_hit.is_some() {
-            self.ball.velocity.x = -self.ball.velocity.x;
+        if let Some(paddle) = paddle_hit {
+            // Increase the ball's velocity, then flip it.
+            self.ball.velocity.x =
+                -(self.ball.velocity.x + (BALL_ACC * self.ball.velocity.x.signum()));
+        
+            // Calculate the offset between the paddle and the ball, as a number between
+            // -1.0 and 1.0.
+            let offset = (paddle.centre().y - self.ball.centre().y) / paddle.height();
+        
+            // Apply the spin to the ball.
+            self.ball.velocity.y += PADDLE_SPIN * -offset;
+        }
+
+        if self.ball.position.y <= 0.0 || self.ball.position.y + self.ball.height() >= WINDOW_HEIGHT
+        {
+            self.ball.velocity.y = -self.ball.velocity.y;
         }
 
         Ok(())
