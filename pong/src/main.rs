@@ -22,6 +22,7 @@ impl Entity {
 struct GameState {
     player1: Entity,
     player2: Entity,
+    ball: Entity,
 }
 
 impl GameState {
@@ -38,9 +39,16 @@ impl GameState {
             (WINDOW_HEIGHT - player2_texture.height() as f32) / 2.0,
         );
 
+        let ball_texture = Texture::new(ctx, "./resources/ball.png")?;
+        let ball_position = Vec2::new(
+            WINDOW_WIDTH / 2.0 - ball_texture.width() as f32 / 2.0,
+            WINDOW_HEIGHT / 2.0 - ball_texture.height() as f32 / 2.0,
+        );
+        
         Ok(GameState {
             player1: Entity::new(player1_texture, player1_position),
             player2: Entity::new(player2_texture, player2_position),
+            ball: Entity::new(ball_texture, ball_position),
         })
     }
 }
@@ -68,10 +76,11 @@ impl State for GameState {
 
     fn draw(&mut self, ctx: &mut Context) -> tetra::Result {
         graphics::clear(ctx, Color::rgb(0.392, 0.584, 0.929));
-
+    
         self.player1.texture.draw(ctx, self.player1.position);
         self.player2.texture.draw(ctx, self.player2.position);
-
+        self.ball.texture.draw(ctx, self.ball.position);
+    
         Ok(())
     }
 }
