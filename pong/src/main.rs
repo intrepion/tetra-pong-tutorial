@@ -3,8 +3,18 @@ use tetra::input::{self, Key};
 use tetra::math::Vec2;
 use tetra::{Context, ContextBuilder, State};
 
+const WINDOW_WIDTH: f32 = 640.0;
+const WINDOW_HEIGHT: f32 = 480.0;
+
 struct GameState {
     paddle_texture: Texture,
+}
+
+impl GameState {
+    fn new(ctx: &mut Context) -> tetra::Result<GameState> {
+        let paddle_texture = Texture::new(ctx, "./resources/player1.png")?;
+        Ok(GameState { paddle_texture })
+    }
 }
 
 impl State for GameState {
@@ -17,11 +27,8 @@ impl State for GameState {
 }
 
 fn main() -> tetra::Result {
-    ContextBuilder::new("Pong", 640, 480)
+    ContextBuilder::new("Pong", WINDOW_WIDTH as i32, WINDOW_HEIGHT as i32)
         .quit_on_escape(true)
         .build()?
-        .run(|ctx| {
-            let paddle_texture = Texture::new(ctx, "./resources/player1.png")?;
-            Ok(GameState { paddle_texture })
-        })
+        .run(GameState::new)
 }
